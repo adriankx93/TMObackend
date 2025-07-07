@@ -80,3 +80,23 @@ router.get('/current-month', async (req, res) => {
           shiftRowIndex: i,
           firstName: row[0].trim(),
           lastName: row[1].trim(),
+          role: row[2] ? row[2].trim() : ""
+        };
+      })
+      .filter(Boolean);
+
+    // 4) Zwrot danych
+    res.json({
+      month: sheetName,
+      year,
+      technicians,
+      dates,
+      shifts: shiftsData
+    });
+
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+module.exports = router;
