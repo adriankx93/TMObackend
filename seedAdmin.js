@@ -1,3 +1,9 @@
+require('dotenv').config();
+const mongoose = require('mongoose');
+const User = require('./models/User');
+
+mongoose.connect(process.env.MONGO_URI || 'mongodb://localhost:27017/tmo');
+
 async function createAdmin() {
   try {
     const exists = await User.findOne({ email: 'admin' });
@@ -16,8 +22,9 @@ async function createAdmin() {
   } catch (err) {
     console.error(err);
   } finally {
-    mongoose.disconnect();
+    await mongoose.disconnect();   // <--- Poprawione (czekamy aż się rozłączy)
     process.exit();
   }
 }
+
 createAdmin();
