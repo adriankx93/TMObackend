@@ -25,6 +25,7 @@ connectDB();
 app.use('/api/auth', require('./routes/auth'));
 app.use('/api/users', require('./routes/users'));
 app.use('/api/sheets', require('./routes/sheets'));
+app.use('/api/Warehouse', require('./routes/warehouse'));
 
 // ===== PROXY do pobierania zgłoszenia SPIE =====
 app.get('/api/protokol', async (req, res) => {
