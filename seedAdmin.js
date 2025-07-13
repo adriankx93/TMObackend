@@ -4,27 +4,31 @@ const User = require('./models/User');
 
 mongoose.connect(process.env.MONGO_URI || 'mongodb://localhost:27017/tmo');
 
-async function createAdmin() {
+async function createTester() {
   try {
-    const exists = await User.findOne({ email: 'admin' });
+    // Usuń użytkownika "admin" jeśli istnieje
+    await User.deleteOne({ email: 'admin' });
+
+    // Sprawdź czy już jest "tester"
+    const exists = await User.findOne({ email: 'tester' });
     if (!exists) {
       await User.create({
-        firstName: 'Super',
-        lastName: 'Admin',
-        email: 'admin',
-        password: 'adrian128',
+        firstName: 'Test',
+        lastName: 'Tester',
+        email: 'tester',
+        password: 'test1234',
         role: 'Admin'
       });
-      console.log('Admin utworzony!');
+      console.log('Konto tester utworzone!');
     } else {
-      console.log('Admin już istnieje.');
+      console.log('Tester już istnieje.');
     }
   } catch (err) {
     console.error(err);
   } finally {
-    await mongoose.disconnect();   // <--- Poprawione (czekamy aż się rozłączy)
+    await mongoose.disconnect();
     process.exit();
   }
 }
 
-createAdmin();
+createTester();
