@@ -2,7 +2,6 @@ require('dotenv').config();
 const express = require('express');
 const cors = require('cors');
 const connectDB = require('./config/db');
-const fetch = require('node-fetch');
 
 const app = express();
 
@@ -25,19 +24,26 @@ connectDB();
 app.use('/api/auth', require('./routes/auth'));
 app.use('/api/users', require('./routes/users'));
 app.use('/api/sheets', require('./routes/sheets'));
-app.use('/api/Warehouse', require('./routes/warehouse'));
+app.use('/api/warehouse', require('./routes/warehouse'));    // <<< Poprawione (małe litery)
+app.use('/api/tasks', require('./routes/tasks'));            // <<< Dodane endpointy do zadań
 
 // ===== PROXY do pobierania zgłoszenia SPIE =====
 app.get('/api/protokol', async (req, res) => {
   const { url } = req.query;
   if (!url) return res.status(400).send("Brak url!");
   try {
+    const fetch = (await import('node-fetch')).default;
     const html = await fetch(url).then(r => r.text());
     res.send(html);
   } catch (err) {
     console.error(err);
     res.status(500).send("Błąd pobierania HTML");
   }
+});
+
+// ===== Healthcheck =====
+app.get("/", (req, res) => {
+  res.json({ message: "API działa!" });
 });
 
 // ===== Start serwera =====
