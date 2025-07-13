@@ -12,7 +12,12 @@ const UserSchema = new mongoose.Schema({
     enum: ['Admin', 'Koordynator', 'Dyżurny BMS', 'Technik'],
     default: 'Technik'
   },
-  active:    { type: Boolean, default: true }
+  active:    { type: Boolean, default: true },
+
+  // --- Dodaj te dwa pola! ---
+  resetPasswordToken: String,
+  resetPasswordExpires: Date
+
 }, { timestamps: true });
 
 // Automatyczne hashowanie hasła
