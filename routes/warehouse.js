@@ -1,22 +1,26 @@
-
-const express = require('express');
+const express = require("express");
 const router = express.Router();
+const WarehouseItem = require("../models/WarehouseItem");
 
-let warehouseItems = []; 
-
-
-router.get('/items', (req, res) => {
-  res.json(warehouseItems);
+// GET wszystkie pozycje
+router.get("/items", async (req, res) => {
+  try {
+    const items = await WarehouseItem.find().sort({ createdAt: -1 });
+    res.json(items);
+  } catch (err) {
+    res.status(500).json({ error: "Błąd pobierania danych magazynowych" });
+  }
 });
 
-
-router.post('/items', (req, res) => {
-  const item = {
-    id: Date.now().toString(),
-    ...req.body
-  };
-  warehouseItems.push(item);
-  res.status(201).json(item);
+// POST nowa pozycja
+router.post("/items", async (req, res) => {
+  try {
+    const newItem = new WarehouseItem(req.body);
+    await newItem.save();
+    res.status(201).json(newItem);
+  } catch (err) {
+    res.status(500).json({ error: "Błąd zapisu pozycji do bazy" });
+  }
 });
 
 module.exports = router;
