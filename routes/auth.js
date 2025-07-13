@@ -3,26 +3,52 @@ const router = express.Router();
 const User = require('../models/User');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
-const { auth } = require('../middleware/auth'); // ← POPRAWIONE TUTAJ!
+const { auth } = require('../middleware/auth');
 
-// Logowanie
+// === REJESTRACJA ===
+router.post('/register', async (req, res) => {
+  const { firstName, lastName, email, password } = req.body;
+  if (!firstName || !lastName || !email || !password) {
+    return res.status(400).json({ message: 'Brak wymaganych danych' });
+  }
+  const existing = await User.findOne({ email });
+  if (existing) return res.status(409).json({ message: 'Email już istnieje' });
+  const user = new User({ firstName, lastName, email, password });
+  await user.save();
+  res.status(201).json({ message: 'Użytkownik zarejestrowany!' });
+});
+
+// === LOGOWANIE ===
 router.post('/login', async (req, res) => {
   const { email, password } = req.body;
   const user = await User.findOne({ email });
   if (!user || !await bcrypt.compare(password, user.password)) {
     return res.status(401).json({ message: 'Błędny login lub hasło' });
   }
-  const token = jwt.sign({ id: user._id, role: user.role }, process.env.JWT_SECRET || 'tajnyklucz', { expiresIn: '7d' });
-  res.json({ token, user: { firstName: user.firstName, lastName: user.lastName, email: user.email, role: user.role, id: user._id } });
+  const token = jwt.sign(
+    { id: user._id, role: user.role },
+    process.env.JWT_SECRET || 'tajnyklucz',
+    { expiresIn: '7d' }
+  );
+  res.json({
+    token,
+    user: {
+      firstName: user.firstName,
+      lastName: user.lastName,
+      email: user.email,
+      role: user.role,
+      id: user._id
+    }
+  });
 });
 
-// Pobieranie własnego profilu
+// === POBIERANIE PROFILU ===
 router.get('/profile', auth, async (req, res) => {
   const user = await User.findById(req.user.id).select('-password');
   res.json(user);
 });
 
-// Edycja własnego profilu
+// === EDYCJA PROFILU ===
 router.put('/profile', auth, async (req, res) => {
   const { firstName, lastName, phone } = req.body;
   const user = await User.findById(req.user.id);
@@ -34,7 +60,7 @@ router.put('/profile', auth, async (req, res) => {
   res.json({ message: 'Zaktualizowano profil' });
 });
 
-// Zmiana hasła
+// === ZMIANA HASŁA ===
 router.put('/profile/password', auth, async (req, res) => {
   const { oldPassword, newPassword } = req.body;
   const user = await User.findById(req.user.id);
