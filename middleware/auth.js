@@ -1,4 +1,4 @@
-// v2 by ChatGPT 2025-07-14
+
 
 const jwt = require('jsonwebtoken');
 
