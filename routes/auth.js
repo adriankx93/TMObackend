@@ -1,12 +1,12 @@
 
-const { express } = require('express');
-const { router } = express.Router();
-const { User } = require('../models/User');
-const { bcrypt } = require('bcryptjs');
-const { jwt } = require('jsonwebtoken');
-const { nodemailer } = require('nodemailer');
-const { crypto } = require('crypto');
-const { auth } = require('../middleware/auth'); // <-- POPRAWKA TU
+const express = require('express');
+const router = express.Router();
+const User = require('../models/User');
+const bcrypt = require('bcryptjs');
+const jwt = require('jsonwebtoken');
+const nodemailer = require('nodemailer');
+const crypto = require('crypto');
+const { auth } = require('../middleware/auth'); 
 
 // --- Nodemailer config (Gmail lub SMTP) ---
 const transporter = nodemailer.createTransport({
