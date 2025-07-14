@@ -6,7 +6,7 @@ const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const nodemailer = require('nodemailer');
 const crypto = require('crypto');
-const auth = require('../middleware/auth');
+const auth = require('../middleware/auth'); // <-- POPRAWKA TU
 
 // --- Nodemailer config (Gmail lub SMTP) ---
 const transporter = nodemailer.createTransport({
